@@ -20,7 +20,7 @@ type Collection struct {
 	Extension string
 
 	// Paths is list of directories to look for settings file.
-	Paths []string
+	SearchPaths []string
 }
 
 // Name returns name of this collection.
@@ -32,12 +32,12 @@ func (cl *Collection) Name() string {
 // For example, if a collection created with directory name 'test' and named 'settings',
 // with default extension, then this function will look for SEARCH_DIR/test/settings.yaml.
 func (cl *Collection) Load(v interface{}) error {
-	if len(cl.Paths) == 0 {
+	if len(cl.SearchPaths) == 0 {
 		return nil
 	}
 
 	var filepath string
-	for _, fpath := range cl.Paths {
+	for _, fpath := range cl.SearchPaths {
 		if _, err := os.Stat(fpath); os.IsNotExist(err) {
 			continue
 		}
@@ -67,12 +67,12 @@ func NewCollection(dirname, name string) (*Collection, error) {
 	os := runtime.GOOS
 
 	if os == "windows" {
-		collection.Paths = []string{
+		collection.SearchPaths = []string{
 			path.Join(user.HomeDir, dirname, filename),
 			filename,
 		}
 	} else {
-		collection.Paths = []string{
+		collection.SearchPaths = []string{
 			path.Join("/etc", dirname, filename),
 			path.Join(user.HomeDir, fmt.Sprintf(".%s", dirname), filename),
 			filename,

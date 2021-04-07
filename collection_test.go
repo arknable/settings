@@ -20,7 +20,7 @@ func TestCollectionNew(t *testing.T) {
 
 	os := runtime.GOOS
 	if os == "linux" {
-		assert.Equal(t, "/etc/testapp/settings.yaml,/home/arknable/.testapp/settings.yaml,settings.yaml", strings.Join(collection.Paths, ","))
+		assert.Equal(t, "/etc/testapp/settings.yaml,/home/arknable/.testapp/settings.yaml,settings.yaml", strings.Join(collection.SearchPaths, ","))
 	}
 }
 
