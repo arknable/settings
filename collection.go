@@ -25,6 +25,10 @@ type Collection struct {
 	Extension string
 
 	// Paths is list of directories to look for settings file.
+	// Default values are as follows,
+	// - $HOME/.config
+	// - /etc				(Non Windows)
+	// - /usr/local/etc		(Non Windows)
 	SearchPaths []string
 }
 
