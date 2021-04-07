@@ -12,17 +12,25 @@ import (
 
 const defaultExtension = "yaml"
 
+// Collection is a group of settings which are saved in a single yaml file.
 type Collection struct {
 	name string
 
+	// Extension is settings file extension, default is 'yaml'.
 	Extension string
-	Paths     []string
+
+	// Paths is list of directories to look for settings file.
+	Paths []string
 }
 
+// Name returns name of this collection.
 func (cl *Collection) Name() string {
 	return cl.name
 }
 
+// Load read settings file and unmarshal the content as given v.
+// For example, if a collection created with directory name 'test' and named 'settings',
+// with default extension, then this function will look for SEARCH_DIR/test/settings.yaml.
 func (cl *Collection) Load(v interface{}) error {
 	if len(cl.Paths) == 0 {
 		return nil
@@ -44,6 +52,7 @@ func (cl *Collection) Load(v interface{}) error {
 	return yaml.Unmarshal(content, v)
 }
 
+// NewCollection create new collection given its name and directory name.
 func NewCollection(dirname, name string) (*Collection, error) {
 	collection := &Collection{
 		name:      name,

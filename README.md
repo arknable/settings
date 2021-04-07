@@ -1,3 +1,3 @@
 # settings
 
-A simple Go yaml configuration file loader.
+A very simple Go yaml configuration file loader.
