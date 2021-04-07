@@ -1,6 +1,7 @@
 package settings
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/user"
@@ -12,9 +13,13 @@ import (
 
 const defaultExtension = "yaml"
 
+// ErrCollectionNotFound occurred when settings file cannot be found in search paths.
+var ErrCollectionNotFound = errors.New("collection not found")
+
 // Collection is a group of settings which are saved in a single yaml file.
 type Collection struct {
-	name string
+	name    string
+	dirname string
 
 	// Extension is settings file extension, default is 'yaml'.
 	Extension string
@@ -36,12 +41,28 @@ func (cl *Collection) Load(v interface{}) error {
 		return nil
 	}
 
-	var filepath string
-	for _, fpath := range cl.SearchPaths {
+	var (
+		filepath string
+		found    = false
+		pathList = cl.SearchPaths
+	)
+	pathList = append(pathList, "")
+
+	for _, fpath := range pathList {
+		if fpath == "" {
+			filepath = fmt.Sprintf("%s.%s", cl.name, cl.Extension)
+		} else {
+			filepath = path.Join(fpath, cl.dirname, fmt.Sprintf("%s.%s", cl.name, cl.Extension))
+		}
+
 		if _, err := os.Stat(fpath); os.IsNotExist(err) {
 			continue
 		}
-		filepath = fpath
+		found = true
+	}
+
+	if !found {
+		return ErrCollectionNotFound
 	}
 
 	content, err := os.ReadFile(filepath)
@@ -56,9 +77,9 @@ func (cl *Collection) Load(v interface{}) error {
 func NewCollection(name, dirname string) (*Collection, error) {
 	collection := &Collection{
 		name:      name,
+		dirname:   dirname,
 		Extension: defaultExtension,
 	}
-	filename := fmt.Sprintf("%s.%s", name, collection.Extension)
 
 	user, err := user.Current()
 	if err != nil {
@@ -66,18 +87,13 @@ func NewCollection(name, dirname string) (*Collection, error) {
 	}
 	os := runtime.GOOS
 
-	if os == "windows" {
-		collection.SearchPaths = []string{
-			path.Join(user.HomeDir, dirname, filename),
-			filename,
-		}
-	} else {
-		collection.SearchPaths = []string{
-			path.Join("/etc", dirname, filename),
-			path.Join(user.HomeDir, fmt.Sprintf(".%s", dirname), filename),
-			filename,
-		}
+	if os != "windows" {
+		collection.SearchPaths = append(collection.SearchPaths, []string{
+			"/etc",
+			"/usr/local/etc",
+		}...)
 	}
+	collection.SearchPaths = append(collection.SearchPaths, path.Join(user.HomeDir, ".config"))
 
 	return collection, nil
 }

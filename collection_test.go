@@ -18,9 +18,16 @@ func TestCollectionNew(t *testing.T) {
 	assert.Equal(t, "settings", collection.Name())
 	assert.Equal(t, defaultExtension, collection.Extension)
 
+	user, err := user.Current()
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	os := runtime.GOOS
-	if os == "linux" {
-		assert.Equal(t, "/etc/testapp/settings.yaml,/home/arknable/.testapp/settings.yaml,settings.yaml", strings.Join(collection.SearchPaths, ","))
+	if os == "windows" {
+		assert.Equal(t, path.Join(user.HomeDir, ".config"), strings.Join(collection.SearchPaths, ","))
+	} else {
+		assert.Equal(t, "/etc,/usr/local/etc,"+path.Join(user.HomeDir, ".config"), strings.Join(collection.SearchPaths, ","))
 	}
 }
 
@@ -33,7 +40,7 @@ func TestCollectionLoad(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	dirpath := path.Join(user.HomeDir, ".testapp")
+	dirpath := path.Join(user.HomeDir, ".config", "testapp")
 	if err := os.MkdirAll(dirpath, os.ModePerm); err != nil {
 		t.Fatal(err)
 	}
