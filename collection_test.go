@@ -12,7 +12,7 @@ import (
 )
 
 func TestCollectionNew(t *testing.T) {
-	collection, err := NewCollection("testapp", "settings")
+	collection, err := NewCollection("settings", "testapp")
 	assert.Nil(t, err)
 	assert.NotNil(t, collection)
 	assert.Equal(t, "settings", collection.Name())
@@ -25,7 +25,7 @@ func TestCollectionNew(t *testing.T) {
 }
 
 func TestCollectionLoad(t *testing.T) {
-	collection, err := NewCollection("testapp", "settings")
+	collection, err := NewCollection("settings", "testapp")
 	assert.Nil(t, err)
 	assert.NotNil(t, collection)
 

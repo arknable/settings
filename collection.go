@@ -53,7 +53,7 @@ func (cl *Collection) Load(v interface{}) error {
 }
 
 // NewCollection create new collection given its name and directory name.
-func NewCollection(dirname, name string) (*Collection, error) {
+func NewCollection(name, dirname string) (*Collection, error) {
 	collection := &Collection{
 		name:      name,
 		Extension: defaultExtension,
