@@ -7,7 +7,7 @@ A very simple Go yaml configuration file loader.
 Assuming you want to load `database.yaml` in `myapp` folder:
 
 ```
-collection, err := NewCollection("database", "myapp")
+collection, err := settings.NewCollection("database", "myapp")
 if err != nil {
     // do something    
 }
@@ -24,7 +24,7 @@ if err := collection.Load(model); err != nil {
 
 If you want a different extension:
 ```
-collection, err := NewCollection("database", "myapp")
+collection, err := settings.NewCollection("database", "myapp")
 if err != nil {
     // do something    
 }
@@ -42,7 +42,7 @@ if err := collection.Load(model); err != nil {
 
 If you want to add additional search path:
 ```
-collection, err := NewCollection("database", "myapp")
+collection, err := settings.NewCollection("database", "myapp")
 if err != nil {
     // do something    
 }
